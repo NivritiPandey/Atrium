@@ -1,0 +1,129 @@
+pragma language_version >=0.22.0;
+
+import CompactStandardLibrary;
+
+// ATRIUM: a private, self-asserted eligibility gate, NOT an issuer-backed credential.
+// Public gate configuration. Every exported ledger field is readable on-chain.
+export ledger entry_threshold: Uint<64>;
+export ledger access_pass_id: Bytes<32>;
+export ledger entry_deadline: Uint<64>;
+export ledger curator_id: Bytes<32>;
+export ledger steward: Bytes<32>;
+export ledger gate_open: Boolean;
+// Lifetime admissions and lifetime capacity; neither resets when the pass rotates.
+export ledger total_entries: Counter;
+export ledger entry_limit: Uint<32>;
+export ledger used_nullifiers: Set<Bytes<32>>;
+export ledger entry_log: Map<Bytes<32>, Bytes<32>>;
+export sealed ledger edition: Bytes<32>;
+
+// Private witnesses. Values are supplied by the browser and stay inside the proof.
+witness get_eligibility_score(): Uint<64>;
+witness get_passphrase(): Bytes<32>;
+witness steward_secret(): Bytes<32>;
+
+constructor(
+    threshold: Uint<64>,
+    pass: Bytes<32>,
+    deadline: Uint<64>,
+    curator: Bytes<32>,
+    steward_hash: Bytes<32>,
+    limit: Uint<32>
+) {
+    validate_configuration(threshold, pass, deadline, curator, limit);
+    assert(blockTimeLt(disclose(deadline)), "Deadline has already expired");
+    assert(steward_hash != pad(32, ""), "Steward commitment must not be empty");
+    entry_threshold = disclose(threshold);
+    access_pass_id = disclose(pass);
+    entry_deadline = disclose(deadline);
+    curator_id = disclose(curator);
+    steward = disclose(steward_hash);
+    gate_open = disclose(true);
+    entry_limit = disclose(limit);
+    edition = disclose(pad(32, "ATRIUM:v1"));
+}
+
+// Proves only that a SELF-ASSERTED private score clears the public threshold.
+// A fresh passphrase creates another nullifier: this is not a proof of identity
+// or Sybil resistance. Never claim that the score was verified by an issuer.
+export circuit prove_entry(): [] {
+    assert(disclose(gate_open), "The gate is closed");
+    assert(blockTimeLt(disclose(entry_deadline)), "This pass has expired");
+    assert(disclose(total_entries) < disclose(entry_limit), "Entry capacity reached");
+
+    const score = get_eligibility_score();
+    assert(score >= entry_threshold, "Eligibility threshold not met");
+
+    const passphrase = get_passphrase();
+    const nullifier = make_entry_nullifier(passphrase, access_pass_id);
+    assert(!used_nullifiers.member(disclose(nullifier)), "This pass has already been used");
+
+    used_nullifiers.insert(disclose(nullifier));
+    entry_log.insert(disclose(nullifier), disclose(access_pass_id));
+    total_entries.increment(1);
+}
+
+// Steward-only gate configuration. The private key is never submitted as an argument.
+export circuit rotate_gate(
+    new_threshold: Uint<64>,
+    new_pass: Bytes<32>,
+    new_deadline: Uint<64>,
+    new_curator: Bytes<32>,
+    new_limit: Uint<32>
+): [] {
+    const sk = steward_secret();
+    assert(steward == steward_public_key(sk), "Not authorized as steward");
+    validate_configuration(new_threshold, new_pass, new_deadline, new_curator, new_limit);
+    assert(new_pass != access_pass_id, "Rotation requires a distinct pass identifier");
+    assert(blockTimeLt(disclose(new_deadline)), "New pass has already expired");
+    assert(disclose(total_entries) < disclose(new_limit), "Lifetime capacity must exceed admitted entries");
+    entry_threshold = disclose(new_threshold);
+    access_pass_id = disclose(new_pass);
+    entry_deadline = disclose(new_deadline);
+    curator_id = disclose(new_curator);
+    entry_limit = disclose(new_limit);
+    gate_open = disclose(true);
+}
+
+export circuit close_gate(): [] {
+    const sk = steward_secret();
+    assert(steward == steward_public_key(sk), "Not authorized as steward");
+    gate_open = disclose(false);
+}
+
+export circuit open_gate(): [] {
+    const sk = steward_secret();
+    assert(steward == steward_public_key(sk), "Not authorized as steward");
+    assert(blockTimeLt(disclose(entry_deadline)), "This pass has expired");
+    assert(disclose(total_entries) < disclose(entry_limit), "Entry capacity reached");
+    gate_open = disclose(true);
+}
+
+pure circuit validate_configuration(
+    threshold: Uint<64>,
+    pass: Bytes<32>,
+    deadline: Uint<64>,
+    curator: Bytes<32>,
+    limit: Uint<32>
+): [] {
+    assert(threshold > 0, "Threshold must be positive");
+    assert(pass != pad(32, ""), "Pass identifier must not be empty");
+    assert(deadline > 0, "Deadline must be positive");
+    assert(curator != pad(32, ""), "Curator identifier must not be empty");
+    assert(limit > 0, "Entry capacity must be positive");
+}
+
+export pure circuit steward_public_key(sk: Bytes<32>): Bytes<32> {
+    assert(sk != pad(32, ""), "Steward secret must not be empty");
+    return persistentHash<Vector<2, Bytes<32>>>([pad(32, "ATRIUM:steward:v1"), sk]);
+}
+
+export pure circuit make_entry_nullifier(passphrase: Bytes<32>, pass: Bytes<32>): Bytes<32> {
+    assert(passphrase != pad(32, ""), "Passphrase must not be empty");
+    assert(pass != pad(32, ""), "Pass identifier must not be empty");
+    return persistentHash<Vector<3, Bytes<32>>>([
+        pad(32, "ATRIUM:nullifier:v1"),
+        passphrase,
+        pass
+    ]);
+}

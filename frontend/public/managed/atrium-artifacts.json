@@ -1,0 +1,29 @@
+{
+  "project": "ATRIUM",
+  "source": "contracts/atrium.compact",
+  "sourceSha256": "56a4d9515e874bdcac7ffb78c513c851c82d5cd73c574e77553dc4cec326cfe3",
+  "compilerVersion": "0.31.1",
+  "runtimeVersion": "0.16.0",
+  "files": {
+    "compiler/contract-info.json": "f974558eded51aa58b9b3f6db20c0bb9e13ed3e33bd1a5d997df3b24fc91bbbb",
+    "contract/index.d.ts": "4c29c3c9b0c713382ce14fc5d825ad7f36dc6885fb0ccf0c03903face4b88c72",
+    "contract/index.js": "0a98712fcb82288ead9c4ee104de053243cc0cfb61386c7e08962bdd64d142f9",
+    "contract/index.js.map": "ed3a2b0b75fbfb5d2b3f6a0705490b8eda5686dcdb09aea986ec7f6128cc7507",
+    "keys/close_gate.prover": "94613c25ccb5e44889e4a839235c9962ca1d7ecc2f03f222f725c811be68a7dc",
+    "keys/close_gate.verifier": "189e7a65e909ac8b27355d91544e0bf7a1623f71e09dd89ae3e74a817862180a",
+    "keys/open_gate.prover": "bf82c07968de0a0055abf679f1964fdce72d273b5238b02aa2a3fa8239e1e0e6",
+    "keys/open_gate.verifier": "991bd9078f79f3642f5125918d542d3f36b507b85f4eaa95a1d4776e2da85fa9",
+    "keys/prove_entry.prover": "1b764b66621d6dd79f36160f1fe79aa3c5ea9c711e26b0d26aa3c534e2bff9cc",
+    "keys/prove_entry.verifier": "c160f975adc81aec2a13f6a1fa927587c46f8734a0cdba67df1faf71c4041cb6",
+    "keys/rotate_gate.prover": "532f14e0474cfc7177a69b1525db1ebbbea520321872f284bd9b278230dc6534",
+    "keys/rotate_gate.verifier": "4b4742c7fe6baf6bea8e1656b68ba625908591dafec6ab6e0ae34c6e04e38426",
+    "zkir/close_gate.bzkir": "d2c3527aa5771c407f3506bfeb80c312856ea092d5a8128e51c3756af16ae9fe",
+    "zkir/close_gate.zkir": "6ac52b237a1fe2463dabfe1f87cac3ed6808c99be4bcf2ed07dcccda391064a5",
+    "zkir/open_gate.bzkir": "a1be301f9d73a4d6693fb80b74121164c09e17cd7133572b1c8a0bdb3e3c0d06",
+    "zkir/open_gate.zkir": "c66a8a9e215b1940e5f7728d68b6b93cdd70ba80d15139282c59564efffe950c",
+    "zkir/prove_entry.bzkir": "1c121d0ad095aa3880ddadc3a1b85249d0c818cb35cbd24820b2bf206ee7b92d",
+    "zkir/prove_entry.zkir": "2ef1365bc6f86f58985af5c5b6ccc34eaea26b9c7c47d7b86bcedf2b9449a85a",
+    "zkir/rotate_gate.bzkir": "9d63aa7d204375a2f4d99eacb9693004dd2eaa1c1d4a2a28a751cc16489fa353",
+    "zkir/rotate_gate.zkir": "1b430fef601df3402b992f0160060cd4d6e789ae579e217f9204a84cb6118c98"
+  }
+}

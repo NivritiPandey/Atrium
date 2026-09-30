@@ -38,11 +38,8 @@
 
 ## 🚀 Live Demo & Deployed Contract (Preprod)
 
-- 🌐 **Live Web Application:** [https://atrium-zk.netlify.app](https://atrium-zk.netlify.app)
+- 🌐 **Live Web Application:** [https://atrium-niv.vercel.app/])
 - 🎥 **Demo Video Walkthrough:** [Watch 1-Minute Demo Video](https://github.com/NivritiPandey/Atrium#product-walkthrough)
-- 🐦 **Official X Profile:** [@AtriumZK](https://x.com)
-- 📢 **Launch Announcement Post:** [View on X](https://x.com)
-- 🧵 **Product Thread / Overview:** [View on X](https://x.com)
 - 📜 **Contract Address:** `01425e5fd78c1e07bfb45b267b58f8db56ea52d93cbde28c0705902f9bcd87d8`
 - 🔍 **Deployment Transaction:** `d2e1fbc343a0cb72f88571507737be9e4166886d15fe44655d35b5952ef83c16`
 - 🧭 **1AM Contract Explorer:** [View on 1AM Explorer](https://explorer.1am.xyz/contract/01425e5fd78c1e07bfb45b267b58f8db56ea52d93cbde28c0705902f9bcd87d8)

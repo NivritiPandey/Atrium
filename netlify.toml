@@ -1,0 +1,31 @@
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_FLAGS = "--legacy-peer-deps"
+  # Set VITE_CONTRACT_ADDRESS for Atrium Preprod deployment.
+  VITE_CONTRACT_ADDRESS = "01425e5fd78c1e07bfb45b267b58f8db56ea52d93cbde28c0705902f9bcd87d8"
+  VITE_INDEXER_URL = "https://indexer.preprod.midnight.network/api/v4/graphql"
+  VITE_INDEXER_WS = "wss://indexer.preprod.midnight.network/api/v4/graphql/ws"
+
+# Security & isolation headers required for Midnight WebAssembly & Proof Provers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cross-Origin-Embedder-Policy = "require-corp"
+    Cross-Origin-Opener-Policy = "same-origin"
+
+# CORS and caching for proving keys and managed circuits
+[[headers]]
+  for = "/managed/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# SPA client-side routing fallback
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
